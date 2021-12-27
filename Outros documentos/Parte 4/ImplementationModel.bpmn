@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1n729n5" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+  <bpmn:process id="TravelAgentProcess" name="Travel Agent Process" isExecutable="true">
+    <bpmn:startEvent id="Start" name="Inicio Processo Reserva">
+      <bpmn:outgoing>Flow_088cxqp</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="RegistarPedidodeReserva" name="Registar Pedido de Reserva" implementation="##WebService">
+      <bpmn:incoming>Flow_088cxqp</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fwiw0n</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_088cxqp" sourceRef="Start" targetRef="RegistarPedidodeReserva" />
+    <bpmn:sequenceFlow id="Flow_0fwiw0n" sourceRef="RegistarPedidodeReserva" targetRef="RegistarClassedoPassageiro" />
+    <bpmn:exclusiveGateway id="Gateway_Maisque5dias" name="Mais que 5 dias?">
+      <bpmn:incoming>Flow_1qmrk4g</bpmn:incoming>
+      <bpmn:outgoing>Flow_Sim</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Nao</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_Sim" name="Sim" sourceRef="Gateway_Maisque5dias" targetRef="GerarCupao">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${maisQue5}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="GerarCupao" name="Gerar Cupao" camunda:delegateExpression="${gerarCupaoDelegate}">
+      <bpmn:documentation>Oferta de uma noite numa próxima compra. 
+Use o código gerado numa próxima compra para usufruir do desconto.</bpmn:documentation>
+      <bpmn:incoming>Flow_Sim</bpmn:incoming>
+      <bpmn:outgoing>Flow_0176wah</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0176wah" sourceRef="GerarCupao" targetRef="VerCupao" />
+    <bpmn:exclusiveGateway id="Gateway">
+      <bpmn:incoming>Flow_Nao</bpmn:incoming>
+      <bpmn:incoming>Flow_0am36to</bpmn:incoming>
+      <bpmn:outgoing>Flow_02yfbsd</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_Nao" name="Nao" sourceRef="Gateway_Maisque5dias" targetRef="Gateway">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!maisQue5}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="ConfirmarReserva" name="Confirmar Reserva" implementation="##WebService">
+      <bpmn:incoming>Flow_02yfbsd</bpmn:incoming>
+      <bpmn:outgoing>Flow_05mvsgy</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="ReservaConcluida" name="Reserva Concluida">
+      <bpmn:incoming>Flow_0q0zsil</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="TimerEvent" name="15 minutos" attachedToRef="ConfirmarReserva">
+      <bpmn:outgoing>Flow_156fj9i</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1oy3qcs">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT15M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_05mvsgy" name="" sourceRef="ConfirmarReserva" targetRef="Gateway_0zwo69w" />
+    <bpmn:sequenceFlow id="Flow_0q0zsil" name="" sourceRef="EnviarBilhetes" targetRef="ReservaConcluida" />
+    <bpmn:sequenceFlow id="Flow_02yfbsd" sourceRef="Gateway" targetRef="ConfirmarReserva" />
+    <bpmn:endEvent id="ReservaCancelada" name="Reserva Cancelada">
+      <bpmn:incoming>Flow_156fj9i</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_156fj9i" sourceRef="TimerEvent" targetRef="ReservaCancelada" />
+    <bpmn:sequenceFlow id="Flow_017354q" sourceRef="RegistarClassedoPassageiro" targetRef="CalcularTempodeViagem" />
+    <bpmn:userTask id="RegistarClassedoPassageiro" name="Registar Classe do Passageiro">
+      <bpmn:incoming>Flow_0fwiw0n</bpmn:incoming>
+      <bpmn:outgoing>Flow_017354q</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0kgzkgc" sourceRef="RegistarReserva" targetRef="EnviarBilhetes" />
+    <bpmn:userTask id="RegistarReserva" name="Registar Reserva">
+      <bpmn:incoming>Flow_1vv2q1k</bpmn:incoming>
+      <bpmn:outgoing>Flow_0kgzkgc</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sendTask id="EnviarBilhetes" name="Enviar Bilhetes" implementation="##WebService" camunda:delegateExpression="${emailEnviarBilhetesDelegate}">
+      <bpmn:incoming>Flow_0kgzkgc</bpmn:incoming>
+      <bpmn:outgoing>Flow_0q0zsil</bpmn:outgoing>
+      <bpmn:ioSpecification>
+        <bpmn:dataOutput />
+        <bpmn:inputSet name="DefaultInputSet" />
+        <bpmn:outputSet name="DefaultOutputSet" />
+      </bpmn:ioSpecification>
+    </bpmn:sendTask>
+    <bpmn:serviceTask id="CalcularTempodeViagem" name="Calcular Tempo de Viagem" camunda:delegateExpression="${calcularTempodeViagemDelegate}">
+      <bpmn:incoming>Flow_017354q</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qmrk4g</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1qmrk4g" sourceRef="CalcularTempodeViagem" targetRef="Gateway_Maisque5dias" />
+    <bpmn:exclusiveGateway id="Gateway_0zwo69w">
+      <bpmn:incoming>Flow_05mvsgy</bpmn:incoming>
+      <bpmn:outgoing>Flow_1vv2q1k</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0lvy805</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1vv2q1k" name="Sim" sourceRef="Gateway_0zwo69w" targetRef="RegistarReserva">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${processInstance.travelAgent.confirmarReserva}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_0md2y7x" name="Reserva Nao Confirmada">
+      <bpmn:incoming>Flow_0lvy805</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0lvy805" name="Nao" sourceRef="Gateway_0zwo69w" targetRef="Event_0md2y7x">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!processInstance.travelAgent.confirmarReserva}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0am36to" sourceRef="VerCupao" targetRef="Gateway" />
+    <bpmn:userTask id="VerCupao" name="Ver Cupao">
+      <bpmn:documentation>Dizer ao cliente que o cupao é uma oferta de uma noite numa próxima compra, usando o codigo gerado para usufruir do desconto.</bpmn:documentation>
+      <bpmn:incoming>Flow_0176wah</bpmn:incoming>
+      <bpmn:outgoing>Flow_0am36to</bpmn:outgoing>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="TravelAgentProcess">
+      <bpmndi:BPMNEdge id="Flow_0lvy805_di" bpmnElement="Flow_0lvy805">
+        <di:waypoint x="1570" y="225" />
+        <di:waypoint x="1570" y="150" />
+        <di:waypoint x="1652" y="150" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1575" y="185" width="21" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vv2q1k_di" bpmnElement="Flow_1vv2q1k">
+        <di:waypoint x="1595" y="250" />
+        <di:waypoint x="1750" y="250" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1663" y="232" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qmrk4g_di" bpmnElement="Flow_1qmrk4g">
+        <di:waypoint x="710" y="250" />
+        <di:waypoint x="775" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kgzkgc_di" bpmnElement="Flow_0kgzkgc">
+        <di:waypoint x="1850" y="250" />
+        <di:waypoint x="1930" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_017354q_di" bpmnElement="Flow_017354q">
+        <di:waypoint x="540" y="250" />
+        <di:waypoint x="610" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_156fj9i_di" bpmnElement="Flow_156fj9i">
+        <di:waypoint x="1466" y="305" />
+        <di:waypoint x="1466" y="379" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02yfbsd_di" bpmnElement="Flow_02yfbsd">
+        <di:waypoint x="1285" y="250" />
+        <di:waypoint x="1366" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0q0zsil_di" bpmnElement="Flow_0q0zsil">
+        <di:waypoint x="2030" y="250" />
+        <di:waypoint x="2106" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05mvsgy_di" bpmnElement="Flow_05mvsgy">
+        <di:waypoint x="1466" y="250" />
+        <di:waypoint x="1545" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zux4tk_di" bpmnElement="Flow_Nao">
+        <di:waypoint x="825" y="250" />
+        <di:waypoint x="1235" y="250" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1019" y="232" width="21" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0176wah_di" bpmnElement="Flow_0176wah">
+        <di:waypoint x="980" y="120" />
+        <di:waypoint x="1080" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10cqmu9_di" bpmnElement="Flow_Sim">
+        <di:waypoint x="800" y="225" />
+        <di:waypoint x="800" y="120" />
+        <di:waypoint x="880" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="806" y="170" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fwiw0n_di" bpmnElement="Flow_0fwiw0n">
+        <di:waypoint x="370" y="250" />
+        <di:waypoint x="440" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_088cxqp_di" bpmnElement="Flow_088cxqp">
+        <di:waypoint x="212" y="250" />
+        <di:waypoint x="270" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0am36to_di" bpmnElement="Flow_0am36to">
+        <di:waypoint x="1180" y="120" />
+        <di:waypoint x="1260" y="120" />
+        <di:waypoint x="1260" y="225" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0yid3he_di" bpmnElement="Start">
+        <dc:Bounds x="182" y="235" width="30" height="30" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="160" y="267" width="75" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0dnpomw_di" bpmnElement="RegistarPedidodeReserva">
+        <dc:Bounds x="270" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0jpgf7r_di" bpmnElement="Gateway_Maisque5dias" isMarkerVisible="true">
+        <dc:Bounds x="775" y="225" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="758" y="282" width="84" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_10orf2d_di" bpmnElement="Gateway" isMarkerVisible="true">
+        <dc:Bounds x="1235" y="225" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1vo4b73_di" bpmnElement="ConfirmarReserva">
+        <dc:Bounds x="1366" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ngaya7_di" bpmnElement="ReservaConcluida">
+        <dc:Bounds x="2106" y="236" width="28" height="28" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2098" y="271" width="49" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0xd4jy4_di" bpmnElement="ReservaCancelada">
+        <dc:Bounds x="1452" y="379" width="28" height="28" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1442" y="414" width="53" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ecxz83_di" bpmnElement="RegistarClassedoPassageiro">
+        <dc:Bounds x="440" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1d31w7l_di" bpmnElement="RegistarReserva">
+        <dc:Bounds x="1750" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0p5i5fv_di" bpmnElement="EnviarBilhetes">
+        <dc:Bounds x="1930" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0eq43lf_di" bpmnElement="CalcularTempodeViagem">
+        <dc:Bounds x="610" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0zwo69w_di" bpmnElement="Gateway_0zwo69w" isMarkerVisible="true">
+        <dc:Bounds x="1545" y="225" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0md2y7x_di" bpmnElement="Event_0md2y7x">
+        <dc:Bounds x="1652" y="132" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1638" y="175" width="65" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_05nhrpe_di" bpmnElement="GerarCupao">
+        <dc:Bounds x="880" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0otx15c_di" bpmnElement="VerCupao">
+        <dc:Bounds x="1080" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0map0jk_di" bpmnElement="TimerEvent">
+        <dc:Bounds x="1451" y="275" width="30" height="30" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1473" y="313" width="55" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
