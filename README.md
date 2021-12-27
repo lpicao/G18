@@ -1,5 +1,9 @@
 # G18
 Avaliação MIP
+
+
+
+
 Este repositório contém os ficheiros utilizados pelo grupo 18, conforme solicitado pelos professores no ponto 4.2 "Código fonte produzido" no template do relaório.
 
 Código Fonte Produzido:
