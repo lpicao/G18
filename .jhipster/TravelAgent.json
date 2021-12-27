@@ -1,0 +1,74 @@
+{
+  "fields": [
+    {
+      "fieldName": "nomeCompletoCliente",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "dataDeNascimento",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "cartaoCidadao",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "morada",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "mail",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "destino",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "inicioDataViagem",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "fimDataViagem",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "classePassageiro",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "companhiaAerea",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "idBilhete",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "confirmarReserva",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "preco",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "maisQue5",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "codigoCupao",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [],
+  "entityType": "domain",
+  "service": "serviceClass",
+  "dto": "mapstruct",
+  "jpaMetamodelFiltering": false,
+  "readOnly": true,
+  "pagination": "no",
+  "skipFakeData": true,
+  "name": "TravelAgent",
+  "changelogDate": "20210401000004"
+}

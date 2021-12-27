@@ -1,0 +1,23 @@
+{
+  "fields": [
+    {
+      "fieldName": "codigoCupao",
+      "fieldType": "String",
+      "fieldReadOnly": true
+    }
+  ],
+  "relationships": [],
+  "entityType": "user-task-form",
+  "processBpmnId": "TravelAgentProcess",
+  "processEntityName": "TravelAgentProcess",
+  "taskBpmnId": "VerCupao",
+  "domainEntityName": "TravelAgent",
+  "service": "serviceClass",
+  "dto": "mapstruct",
+  "jpaMetamodelFiltering": false,
+  "readOnly": false,
+  "pagination": "no",
+  "skipFakeData": true,
+  "name": "TaskCupao",
+  "changelogDate": "20210401000004"
+}

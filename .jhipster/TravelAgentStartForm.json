@@ -1,0 +1,37 @@
+{
+  "fields": [
+    {
+      "fieldName": "nomeCompletoCliente",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "dataDeNascimento",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "cartaoCidadao",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "morada",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "mail",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [],
+  "entityType": "start-form",
+  "processBpmnId": "TravelAgentProcess",
+  "processEntityName": "TravelAgentProcess",
+  "domainEntityName": "TravelAgent",
+  "service": "serviceClass",
+  "dto": "mapstruct",
+  "jpaMetamodelFiltering": false,
+  "readOnly": false,
+  "pagination": "no",
+  "name": "TravelAgentStartForm",
+  "changelogDate": "20210401000004",
+  "skipFakeData": true
+}
