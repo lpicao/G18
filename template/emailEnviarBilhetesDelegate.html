@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" lang="en">
+  <head>
+    <title>Travel Plan Confirmação de Pedido</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <p>Caro <span th:text="${travelAgent.nomeCompletoCliente}">nomeCompletoCliente</span></p>
+    <p>Informações importantes sobre a sua viagem. Encontra aqui os documentos de viagem do bilhete  <b th:text="${travelAgent.idBilhete}">idBilhete</b></p>
+    <ul>
+        <li><b>Nome</b>: <span th:text="${travelAgent.nomeCompletoCliente }"></span></li>
+        <li><b>Cartão Cidadão</b>: <span th:text="${travelAgent.cartaoCidadao }"></span></li>
+        <li><b>Data de Nascimento</b>: <span th:text="${travelAgent.dataDeNascimento }"></span></li>
+        <li><b>Destino</b>: <span th:text="${travelAgent.destino }"></span></li>
+        <li><b>Voo Ida</b>: <span th:text="${travelAgent.inicioDataViagem }"></span></li>
+        <li><b>Voo Regresso</b>: <span th:text="${travelAgent.fimDataViagem }"></span></li>
+        <li><b>Classe</b>: <span th:text="${travelAgent.classePassageiro }"></span></li>
+        <li><b>Companhia Aérea</b>: <span th:text="${travelAgent.companhiaAerea }"></span></li>
+        <li><b>Id Bilhete</b>: <span th:text="${travelAgent.idBilhete }"></span></li>
+        <li><b>Preço</b>: <span th:text="${travelAgent.preco }"></span></li>
+    </ul>
+    <p>Caso tenha feito uma reserva com mais de 5 dias, aqui tem o código do seu cupão para uma próxima viagem: <b th:text="${travelAgent.codigoCupao}">codigoCupao</b></p>
+    <p>
+      Obrigado pelo seu pedido,
+      <br />
+      <em>TravelAgent</em>
+    </p>
+  </body>
+</html>
